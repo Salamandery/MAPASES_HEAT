@@ -4,18 +4,90 @@
  * and open the template in the editor.
  */
 package send_mapa_ses;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.Toolkit;
+import java.awt.TrayIcon;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.ImageIcon;
+
 
 /**
  *
  * @author rodolfo.abreu
  */
 public class jfPrincipal extends javax.swing.JFrame {
-
+    private static TrayIcon trayIcon = null;
+    private SystemTray tray = SystemTray.getSystemTray();
+    private String stats;
     /**
      * Creates new form jfPrincipal
      */
+    private static void ShowMessageListener(String title, String msg, TrayIcon.MessageType messageType) {
+        
+        trayIcon.displayMessage(title, msg, messageType);
+    }
+    
+    private static void ClearTable() {
+        jTxtFileName.setText("");
+        jLblInfo.setText("Processando...");
+    }
+    
     public jfPrincipal() {
         initComponents();
+        // define stats
+        stats = "aberta";
+        // verifica se o sistema aceita sistema de trayicon
+        if (SystemTray.isSupported()) {
+            //setando o icone
+            Image image = Toolkit.getDefaultToolkit().getImage("C:/AtomicCodes/Sys/Logo.png");
+            image = image.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
+            //ImageIcon logo = new ImageIcon(image);
+            // criando popup
+            PopupMenu popup = new PopupMenu("Menu de Opções");
+            // criando tray icon e suas configuraçoes
+            trayIcon = new TrayIcon(image, "Saturno System Server: integração em andamento...", popup);
+            trayIcon.setImageAutoSize(true);
+
+            try {
+                tray.add(trayIcon);
+                jfPrincipal.ShowMessageListener("Notificação Saturno System Server:", "Seja Bem-vindo ao sistema Saturno de Envio. Estarei cuidando de tudo para você..", TrayIcon.MessageType.NONE);
+            } catch (AWTException ex) {
+                jLblInfo.setText("Erro.. " +ex.getMessage());
+            }
+
+            //listener para que a janela se abra com
+            //o clique do mouse
+            trayIcon.addMouseListener(new MouseAdapter() {
+
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (stats.equals("aberta") && isVisible()) {
+                        //esconde a janela
+                        setVisible(false);
+                        stats = "minimiza";
+                    } else {
+                        //reabre a janela
+                        setVisible(true);
+                        //quando a janela for reaberta
+                        setExtendedState(NORMAL);
+                        toFront();
+                        stats = "aberta";
+                    }
+                }
+
+            });
+        }
     }
 
     /**
@@ -27,22 +99,193 @@ public class jfPrincipal extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
+        jTxtFileName = new javax.swing.JTextField();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTextArea1 = new javax.swing.JTextArea();
+        jButton1 = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLblInfo = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTxtArea = new javax.swing.JTextArea();
+        jLabel6 = new javax.swing.JLabel();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setText("TI - HEAT");
+
+        jLabel2.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Envio de arquivo .CSV via FTP.");
+        jLabel2.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+
+        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel3.setText("MAPASES");
+
+        jTxtFileName.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+
+        jLabel4.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel4.setText("NOME DO ARQUIVO:");
+
+        jLabel5.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel5.setText("INSTRUÇÕES:");
+
+        jTextArea1.setEditable(false);
+        jTextArea1.setColumns(20);
+        jTextArea1.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jTextArea1.setLineWrap(true);
+        jTextArea1.setRows(5);
+        jTextArea1.setText("- O ARQUIVO DEVE SER SALVO NA PASTA ARQUIVO;\n\n- DIGITE O NOME DO ARQUIVO CORRETAMENTE NO CAMPO CORRESPONDENTE;");
+        jScrollPane1.setViewportView(jTextArea1);
+
+        jButton1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jButton1.setText("ENVIAR");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        jLblInfo.setText("Aguardando instrução..");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLblInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(jLblInfo))
+        );
+
+        jTxtArea.setColumns(20);
+        jTxtArea.setFont(new java.awt.Font("Monospaced", 1, 10)); // NOI18N
+        jTxtArea.setForeground(new java.awt.Color(255, 0, 0));
+        jTxtArea.setLineWrap(true);
+        jTxtArea.setRows(5);
+        jScrollPane2.setViewportView(jTxtArea);
+
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("PROGRESSO:");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(76, 76, 76)
+                        .addComponent(jLabel1)
+                        .addGap(65, 65, 65)
+                        .addComponent(jLabel3)
+                        .addContainerGap(88, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1)
+                            .addComponent(jTxtFileName, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel4))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel6)
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel3))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jTxtFileName, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+    
+    private List<Image> WinIcon() {
+        List<Image> icons = new ArrayList<>();
+        ImageIcon ico = new ImageIcon("C:/AtomicCodes/Sys/Logo.png");
+        Image icon = ico.getImage();
+        icon = icon.getScaledInstance(64, 64, java.awt.Image.SCALE_SMOOTH);
+        icons.add(icon);
+        
+        icon = icon.getScaledInstance(32, 32, java.awt.Image.SCALE_SMOOTH);
+        icons.add(icon);
+        
+        icon = icon.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH);
+        icons.add(icon);
+        
+        
+        return icons;
+    }
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        SendFile();
+        ClearTable();
+    }//GEN-LAST:event_jButton1ActionPerformed
+    private static void SendFile() {
+        String name = jTxtFileName.getText();
+        try {
+            ProcessBuilder builder = new ProcessBuilder("cmd.exe", "/c", "python modelo.py arquivo/"+name+".csv "+name+" escalashospitalares saude 542dd58181ytrhr56562 --filename="+name+".csv.gz");
+            builder.redirectErrorStream(true);
+            Process p;
+            p = builder.start();
+            BufferedReader r = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            String line;
+            while (true) {
+                line = r.readLine();
+                if (line == null) { break; }
+                jTxtArea.append("\n"+line);
+                System.out.println(line);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(jfPrincipal.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     /**
      * @param args the command line arguments
      */
@@ -79,5 +322,19 @@ public class jfPrincipal extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private static javax.swing.JLabel jLblInfo;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTextArea jTextArea1;
+    private static javax.swing.JTextArea jTxtArea;
+    private static javax.swing.JTextField jTxtFileName;
     // End of variables declaration//GEN-END:variables
 }

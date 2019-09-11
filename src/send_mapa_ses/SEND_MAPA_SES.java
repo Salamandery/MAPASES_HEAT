@@ -16,6 +16,7 @@ public class SEND_MAPA_SES {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        new jfPrincipal().setVisible(true);
     }
     
 }
